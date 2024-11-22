@@ -21,7 +21,7 @@ const HeroSection = () => {
           </div>
         </div>
         <div className="md:w-1/2">
-          <img src="illustration.png" alt="Hackathon Illustration" className="w-full h-auto" />
+          <img src="../../public/img/cuate.png" alt="Hackathon Illustration" className="w-full h-auto" />
         </div>
       </div>
       <div className="container mx-auto px-4 mt-8">

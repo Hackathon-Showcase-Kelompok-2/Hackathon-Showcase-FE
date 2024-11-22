@@ -8,23 +8,9 @@ const About = () => {
         <div className="flex flex-wrap justify-center gap-4">
           <div className="relative">
             <img
-              src="https://via.placeholder.com/150"
+              src="../../public/img/about.png"
               alt="Hackathon 1"
-              className="w-32 h-32 rounded-lg shadow-lg"
-            />
-          </div>
-          <div className="relative">
-            <img
-              src="https://via.placeholder.com/150"
-              alt="Hackathon 2"
-              className="w-32 h-32 rounded-lg shadow-lg"
-            />
-          </div>
-          <div className="relative">
-            <img
-              src="https://via.placeholder.com/150"
-              alt="Hackathon 3"
-              className="w-32 h-32 rounded-lg shadow-lg"
+              className="w-65 h-65 rounded-lg shadow-lg"
             />
           </div>
         </div>
