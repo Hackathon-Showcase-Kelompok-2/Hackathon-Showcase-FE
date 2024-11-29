@@ -45,7 +45,7 @@ const projects = [
 
 const Projects = () => {
   return (
-    <div className="py-10 px-6">
+    <div className="py-10 px-6 bg-white">
       <h2 className="text-3xl font-bold text-center mb-4">Galeri Hackathon</h2>
       <p className="text-center text-gray-600 mb-10">
         Highlight Proyek Hackathon Terbaik dan Terpopuler di G-Hack

@@ -10,13 +10,13 @@ const Navbar = () => {
       <div className="flex space-x-6">
         <a href="#" className="text-gray-800 hover:text-blue-500 font-semibold">Home</a>
         <a href="#" className="text-gray-800 hover:text-blue-500 font-semibold">Projects</a>
-        <a href="#" className="text-gray-800 hover:text-blue-500 font-semibold">Blog</a>
+        <a href="../pages/Blog.jsx" className="text-gray-800 hover:text-blue-500 font-semibold">Blog</a>
         <a href="#" className="text-gray-800 hover:text-blue-500 font-semibold">Events</a>
         <a href="#" className="text-gray-800 hover:text-blue-500 font-semibold">Contact</a>
       </div>
       <div className="flex space-x-4">
         <button className="bg-blue-500 text-white px-4 py-2 rounded">Log in</button>
-        <button className="border border-blue-500 text-blue-500 px-4 py-2 rounded">Sign in</button>
+        <button className="border border-blue-500 text-blue-500 px-4 py-2 rounded bg-white">Sign in</button>
       </div>
     </nav>
   );
