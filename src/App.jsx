@@ -1,26 +1,25 @@
-import React from 'react';
-import Navbar from './components/Navbar';
-import HeroSection from './components/HeroSection';
-import About from './components/About';
-import Projects from './components/Projects';
-import Blog from './components/Blog';
-import EventGallery from './components/EventGallery';
-import Testimonials from './components/Testimonials';
-import Footer from './components/Footer';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import Navbar from './Navbar';
+import Footer from './Footer';
+import Home from './pages/Home';
+import Blog from './pages/Blog';
+import Events from './pages/Events';
+import Projects from './pages/Projects';
+
 
 function App() {
   return (
-    <div>
+    <Router>
       <Navbar />
-      <HeroSection />
-      <About />
-      <Projects />
-      <Blog />
-      <EventGallery />
-      <Testimonials />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/blog" element={<Blog />} />
+        {/* <Route path="/projects" element={<Projects />} /> */}
+        <Route path="/events" element={<Events />} />
+        <Route path="/projects" element={<Projects />} />
+      </Routes>
       <Footer />
-      {/* Konten lainnya */}
-    </div>
+    </Router>
   );
 }
 

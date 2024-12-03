@@ -43,7 +43,7 @@ const projects = [
   },
 ];
 
-const Projects = () => {
+const HomeProjects = () => {
   return (
     <div className="py-10 px-6 bg-white">
       <h2 className="text-3xl font-bold text-center mb-4">Galeri Hackathon</h2>
@@ -88,4 +88,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default HomeProjects;

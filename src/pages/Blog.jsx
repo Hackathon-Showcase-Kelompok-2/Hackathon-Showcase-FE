@@ -1,16 +1,15 @@
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import Articles from "../components/blogs/Articles";
-import Sidebar from "../components/blogs/SideBar";
+import React from "react";
+import Articles from '../blogs/Articles';
+import Sidebar from "../blogs/Sidebar";
 
 
-function App() {
+function Blog() {
     return (
       <div>
-        <Navbar />
         <div className="container mx-auto px-4 py-8 flex flex-col md:flex-row"> <Sidebar /> <Articles /> </div>
-        <Footer />
         {/* Konten lainnya */}
       </div>
     );
   }
+
+  export default Blog;
