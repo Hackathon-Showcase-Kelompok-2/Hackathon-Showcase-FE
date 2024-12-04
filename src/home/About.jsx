@@ -33,7 +33,7 @@ const About = () => {
         <h2 className="text-2xl font-bold text-gray-800 mb-8">Mengapa Galeri Hackathon?</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="p-6 border rounded-lg shadow-md">
-            <div className="text-blue-500 mb-4 text-4xl">💡</div>
+            <div className="container mx-auto"><img src="../../public/img/idea.png" alt="Idea" className="w-50 h-auto " /></div>
             <h3 className="text-lg font-semibold text-gray-800 mb-2">Inovasi</h3>
             <p className="text-gray-600">
               Tunjukkan ide-ide kreatif Anda yang inovatif dan jadikan proyek Anda sebagai solusi
@@ -41,7 +41,7 @@ const About = () => {
             </p>
           </div>
           <div className="p-6 border rounded-lg shadow-md">
-            <div className="text-blue-500 mb-4 text-4xl">🤝</div>
+          <div className="container mx-auto"><img src="../../public/img/collaboration.png" alt="Idea" className="w-50 h-auto " /></div>
             <h3 className="text-lg font-semibold text-gray-800 mb-2">Kolaborasi</h3>
             <p className="text-gray-600">
               Bangun jejaring dengan tim berbakat dari berbagai latar belakang untuk menciptakan
@@ -49,7 +49,7 @@ const About = () => {
             </p>
           </div>
           <div className="p-6 border rounded-lg shadow-md">
-            <div className="text-blue-500 mb-4 text-4xl">🏆</div>
+          <div className="container mx-auto"><img src="../../public/img/achievement.png" alt="Idea" className="w-50 h-auto " /></div>
             <h3 className="text-lg font-semibold text-gray-800 mb-2">Pengakuan</h3>
             <p className="text-gray-600">
               Dapatkan apresiasi atas usaha Anda dengan menampilkan proyek kepada komunitas luas

@@ -5,7 +5,7 @@ const projects = [
     title: "EduTrack",
     description:
       "Aplikasi berbasis Android yang membantu siswa mengatur jadwal belajar, mencatat progres tugas, dan mengakses sumber belajar online.",
-    image: "/img/edutrack.png",
+    image: "../../public/img/edutrack.png",
     user: "Jessica Laily",
     likes: "5k",
     comments: "100",
@@ -15,7 +15,7 @@ const projects = [
     title: "CarePoint",
     description:
       "Aplikasi yang mempermudah pengguna untuk memesan konsultasi dokter, membeli obat, dan mendapatkan layanan kesehatan darurat dalam satu aplikasi.",
-    image: "/img/carepoint.png",
+    image: "../../public/img/CarePoint.png",
     user: "Tania Putri",
     likes: "8k",
     comments: "120",
@@ -25,7 +25,7 @@ const projects = [
     title: "GreenNest",
     description:
       "Website yang menghubungkan komunitas peduli lingkungan untuk berbagi informasi, memulai kampanye, dan berkolaborasi dalam proyek ramah lingkungan.",
-    image: "/img/greennest.png",
+    image: "../../public/img/greennest.png",
     user: "Kevin Alvaro",
     likes: "5k",
     comments: "80",
@@ -35,7 +35,7 @@ const projects = [
     title: "FoodDay",
     description:
       "Website yang memungkinkan pengguna menemukan tempat kuliner lokal terbaik berdasarkan ulasan, lokasi, dan preferensi makanan.",
-    image: "/img/foodday.png",
+    image: "../../public/img/foodday.png",
     user: "Arya Ristaw",
     likes: "10k",
     comments: "60",
@@ -43,9 +43,9 @@ const projects = [
   },
 ];
 
-const Projects = () => {
+const HomeProjects = () => {
   return (
-    <div className="py-10 px-6">
+    <div className="py-10 px-6 bg-white">
       <h2 className="text-3xl font-bold text-center mb-4">Galeri Hackathon</h2>
       <p className="text-center text-gray-600 mb-10">
         Highlight Proyek Hackathon Terbaik dan Terpopuler di G-Hack
@@ -65,7 +65,7 @@ const Projects = () => {
             <p className="text-gray-600 mb-4">{project.description}</p>
             <div className="flex items-center gap-4">
               <img
-                src="/img/user-avatar.png"
+                src="https://storage.googleapis.com/a1aa/image/h0SoP2xfJdTsWKyafeTLroBAevq0udLzfG6GCDjiDdLuaPf8E.jpg"
                 alt={project.user}
                 className="w-8 h-8 rounded-full"
               />
@@ -88,4 +88,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default HomeProjects;
