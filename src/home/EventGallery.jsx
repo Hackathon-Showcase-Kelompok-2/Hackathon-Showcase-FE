@@ -19,7 +19,7 @@ const EventGallery = () => {
         <div className="grid grid-cols-2 gap-4">
           <div className="relative">
             <img
-              src="https://via.placeholder.com/300"
+              src="../../public/img/jadwal.png"
               alt="Hackathon Team"
               className="rounded-lg shadow-md"
             />
@@ -29,7 +29,7 @@ const EventGallery = () => {
           </div>
           <div className="relative">
             <img
-              src="https://via.placeholder.com/300"
+              src="../../public/img/capaian.png"
               alt="Hackathon Target"
               className="rounded-lg shadow-md"
             />
@@ -39,7 +39,7 @@ const EventGallery = () => {
           </div>
           <div className="col-span-2">
             <img
-              src="https://via.placeholder.com/600x300"
+              src="../../public/img/image (1).png"
               alt="Hackathon Event"
               className="rounded-lg shadow-md"
             />

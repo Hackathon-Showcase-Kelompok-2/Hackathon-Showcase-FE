@@ -9,12 +9,10 @@ import CardProjects from "../Projects/CardProjects";
 function Projects() {
   return (
     <div>
-      <Navbar />
       <CardProjects />
       <ProjectFilter />
       <ProjectList />
       <Card />
-      {/* <Footer /> */}
     </div>
   );
 }

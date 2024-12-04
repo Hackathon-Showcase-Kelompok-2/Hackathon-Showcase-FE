@@ -1,12 +1,12 @@
 import React from "react";
 import EventGrid from "../event/EventGrid";
 import UpcommingEvents from "../event/EventList";
-import Card from "../event/Card";
+import CardEvent from "../event/CardEvent";
 
 function Events() {
   return (
-    <div className="bg-white">
-      <Card />
+    <div>
+      <CardEvent />
       <UpcommingEvents />
       <EventGrid />
     </div>

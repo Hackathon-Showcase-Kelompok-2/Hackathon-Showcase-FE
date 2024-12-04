@@ -5,7 +5,7 @@ const blogs = [
     date: "Kamis, 24 Oktober 2024",
     comments: "10 comment",
     title: "Ericsson Gelar Hackathon Dorong Inovasi AI dan Smart Manufacturing",
-    image: "/img/blog1.png",
+    image: "../../public/img/FoodDay.png",
     link: "#",
   },
   {
@@ -13,14 +13,14 @@ const blogs = [
     comments: "20 comment",
     title:
       "Mahasiswa Indonesia Juara Hackathon Blockchain Kompetisi Internasional",
-    image: "/img/blog2.png",
+    image: "../../public/img/EduTrack.png",
     link: "#",
   },
   {
     date: "Rabu, 20 November 2024",
     comments: "5 comment",
     title: "GovAI Hackathon Hasilkan Lima Solusi Generative AI untuk Indonesia",
-    image: "/img/blog3.png",
+    image: "../../public/img/CarePoint.png",
     link: "#",
   },
 ];
@@ -33,9 +33,6 @@ const Blog = () => {
         <p className="text-center text-gray-600 mb-10">
           Blog terpopuler di Kalangan Pengguna minggu ini
         </p>
-        <button className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-          Lihat Artikel Lainnya
-        </button>
       </div>
       <div className="grid md:grid-cols-3 gap-6">
         {blogs.map((blog, index) => (

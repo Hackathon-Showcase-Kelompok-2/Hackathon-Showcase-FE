@@ -2,7 +2,7 @@ import React from "react";
 
 const CommentSection = () => {
   return (
-    <div className="bg-gray-100 p-4">
+    <div className="bg-gray-100 p-4 text-black">
       <div className="max-w-full mx-auto bg-white p-6 rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-blue-600 mb-4">
           Berikan Komentar Anda
@@ -24,7 +24,7 @@ const CommentSection = () => {
           />
           <div className="flex-1">
             <textarea
-              className="w-full p-2 border rounded-lg"
+              className="w-full p-2 border rounded-lg bg-white"
               placeholder="Tulis Komentar..."
               rows="4"
             ></textarea>

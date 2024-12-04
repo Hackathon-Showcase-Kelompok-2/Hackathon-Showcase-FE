@@ -8,12 +8,12 @@ const ProjectFilter = () => {
         <div className="mb-4 flex items-center border border-gray-300 rounded-lg p-2 bg-white">
           <i className="fas fa-search text-gray-500 mr-2"></i>
           <input
-            className="w-full p-2 outline-none"
+            className="w-full p-2 outline-none bg-white"
             placeholder="Cari proyek berdasarkan nama atau kategori..."
             type="text"
           />
         </div>
-        <div className="flex">
+        <div className="flex text-black">
           {/* Filter Section */}
           <div className="w-1/4 p-4 bg-white rounded-lg">
             <h2 className="text-lg font-semibold mb-4">Filter</h2>
@@ -22,7 +22,7 @@ const ProjectFilter = () => {
                 Kategori
               </label>
               <select
-                className="w-full p-2 border border-gray-300 rounded-lg bg-white"
+                className="w-full p-2 border border-gray-300 rounded-lg bg-white text-black"
                 id="kategori"
               >
                 <option>Pilih kategori</option>
@@ -87,7 +87,7 @@ const ProjectFilter = () => {
                     alt="Project"
                     className="rounded-lg mb-4"
                     height="500"
-                    src="./img/EduTract.png"
+                    src="../../public/img/EduTrack.png"
                     width="500"
                   />
                   <h3 className="text-xl font-semibold mb-2">EduTrack</h3>

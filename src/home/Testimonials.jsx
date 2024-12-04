@@ -5,19 +5,19 @@ const testimonials = [
     name: 'Rina Andini',
     title: 'UI/UX Designer',
     comment: 'Galeri Hackathon adalah tempat sempurna untuk menunjukkan inovasi saya.',
-    image: 'rina.png'
+    image: 'https://storage.googleapis.com/a1aa/image/0rkWM9Q2UzaaDtGowmAalUrblimmZVUhdHN0SvalKXR0e85JA.jpg'
   },
   {
     name: 'Arya Nugraha',
     title: 'Software Engineer',
     comment: 'Saya sangat terinspirasi oleh proyek-proyek yang ditampilkan di Galeri Hackathon.',
-    image: 'arya.png'
+    image: 'https://storage.googleapis.com/a1aa/image/e6cpVw3WN91EbipBUOaayu3a5aYEnSbb9eVrmA1a0nNP75zTA.jpg'
   },
   {
     name: 'Dewi Kartika',
     title: 'Data Analyst',
     comment: 'G-Hack membawa ide-ide menjadi nyata dan memberikan ruang bagi kreativitas tanpa batas.',
-    image: 'dewi.png'
+    image: 'https://storage.googleapis.com/a1aa/image/e6cpVw3WN91EbipBUOaayu3a5aYEnSbb9eVrmA1a0nNP75zTA.jpg'
   }
 ];
 

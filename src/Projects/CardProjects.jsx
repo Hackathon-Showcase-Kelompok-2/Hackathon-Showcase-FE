@@ -1,9 +1,9 @@
 import React from "react";
 
-const CardProjects = () => {
+const CardProject = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-blue-50 rounded-2xl p-8 flex flex-col items-center relative overflow-hidden w-full max-w-4xl">
+    <div className="flex items-center justify-center bg-gray-100 py-4 px-4">
+      <div className="bg-blue-50 rounded-2xl p-10 flex flex-col items-center relative overflow-hidden w-full">
         {/* Decorative Circles */}
         <div
           className="absolute w-4 h-4 bg-blue-500 rounded-full"
@@ -67,13 +67,13 @@ const CardProjects = () => {
           Jelajahi Proyek Hackathon Terbaik
         </h1>
         <p className="text-center text-gray-600 mt-6 z-10 leading-relaxed">
-          Temukan inovasi dari hackathon di seluruh dunia
+        Temukan inovasi dari hackathon di seluruh dunia dan
           <br />
-          dan inspirasi perjalanan teknologi Anda.
+          inspirasi perjalanan teknologi Anda.
         </p>
       </div>
     </div>
   );
-}
+};
 
-export default CardProjects; 
+export default CardProject;

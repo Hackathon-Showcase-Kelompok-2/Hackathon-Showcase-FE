@@ -10,7 +10,7 @@ const Footer = () => {
               alt="Logo"
               className="mr-2"
               height="100"
-              src="../../public/img/logo.png"
+              src="../../public/img/Logo 2.png"
               width="150"
             />
           </div>

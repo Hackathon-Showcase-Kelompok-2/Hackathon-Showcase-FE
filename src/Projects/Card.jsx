@@ -8,7 +8,7 @@ const Card = () => {
           alt="Illustration of people working on a project" 
           className="w-1/3" 
           height="150" 
-          src="../../public/img/Projects.png" 
+          src="../../public/img/CarePoint.png" 
           width="150" 
         />
         <div className="flex flex-col">

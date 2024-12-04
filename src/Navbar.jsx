@@ -48,14 +48,24 @@ const Navbar = () => {
         </div>
         <div className="flex space-x-4">
           <button className="bg-white text-blue-500 border border-blue-500 px-4 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition">
-            Sign in
+          <Link
+          to="/signin"
+          className="text-gray-800 hover:text-blue-500 font-semibold"
+        >
+          SignIn
+        </Link>
           </button>
           <button className="bg-white text-blue-500 border border-blue-500 px-4 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition">
-            Sign up
+          <Link
+          to="/signup"
+          className="text-gray-800 hover:text-blue-500 font-semibold"
+        >
+          SignIn
+        </Link>
           </button>
         </div>
       </nav>
-      <div className="pt-20">
+      <div className="pt-20 bg-white">
       </div>
     </>
   );
