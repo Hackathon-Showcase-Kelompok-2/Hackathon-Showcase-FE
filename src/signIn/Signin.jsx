@@ -1,17 +1,23 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const SignIn = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [apiError, setApiError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const togglePassword = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let valid = true;
+
+    const email = e.target.email.value.trim();
+    const password = e.target.password.value.trim();
 
     if (!e.target.email.validity.valid) {
       setEmailError(true);
@@ -20,7 +26,7 @@ const SignIn = () => {
       setEmailError(false);
     }
 
-    if (e.target.password.value.trim() === "") {
+    if (password === "") {
       setPasswordError(true);
       valid = false;
     } else {
@@ -28,12 +34,31 @@ const SignIn = () => {
     }
 
     if (valid) {
-      alert("Form submitted successfully!");
+      setIsLoading(true);
+      try {
+        const response = await axios.post("http://127.0.0.1:8000/api/login", {
+          email,
+          password,
+        });
+
+        // Handle successful login
+        alert("Login successful!");
+        console.log("Response:", response.data);
+        // Simpan token atau data login lainnya jika diperlukan
+        setApiError(""); // Reset API error jika ada
+      } catch (error) {
+        // Handle login error
+        setApiError(
+          error.response?.data?.message || "Login failed. Please try again."
+        );
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
   return (
-    <div className="bg-white flex items-center justify-center min-h-screen">
+    <div className="bg-white flex items-center justify-center min-h-screen w-screen">
       <div className="flex w-full h-full">
         {/* Left Section: Sign In Form */}
         <div className="w-1/2 flex flex-col justify-center p-8 bg-white">
@@ -42,10 +67,12 @@ const SignIn = () => {
             Silakan masukkan email dan password Anda
           </p>
           <form id="signin-form" className="space-y-4" onSubmit={handleSubmit}>
-          
             {/* Email */}
-            <div className="">
-              <label className="block text-sm font-medium text-gray-700 " htmlFor="email">
+            <div>
+              <label
+                className="block text-sm font-medium text-gray-700"
+                htmlFor="email"
+              >
                 Email
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -57,7 +84,7 @@ const SignIn = () => {
                   name="email"
                   type="email"
                   placeholder="Email"
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
                   required
                 />
               </div>
@@ -67,8 +94,11 @@ const SignIn = () => {
             </div>
 
             {/* Password */}
-            <div className="bg-white">
-              <label className="block text-sm font-medium text-gray-700" htmlFor="password">
+            <div>
+              <label
+                className="block text-sm font-medium text-gray-700"
+                htmlFor="password"
+              >
                 Password
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -80,20 +110,26 @@ const SignIn = () => {
                   name="password"
                   type={passwordVisible ? "text" : "password"}
                   placeholder="Password"
-                  className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
                   required
                 />
                 <button
                   type="button"
                   id="toggle-password"
                   onClick={togglePassword}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none bg-white"
                 >
-                  <i className={passwordVisible ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                  <i
+                    className={
+                      passwordVisible ? "fas fa-eye-slash" : "fas fa-eye"
+                    }
+                  ></i>
                 </button>
               </div>
               {passwordError && (
-                <p className="text-red-500 text-sm mt-1">Password tidak boleh kosong.</p>
+                <p className="text-red-500 text-sm mt-1">
+                  Password tidak boleh kosong.
+                </p>
               )}
             </div>
 
@@ -101,10 +137,15 @@ const SignIn = () => {
             <button
               className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               type="submit"
+              disabled={isLoading}
             >
-              Sign In
+              {isLoading ? "Signing in..." : "Sign In"}
             </button>
           </form>
+
+          {apiError && (
+            <p className="text-red-500 text-sm mt-4 text-center">{apiError}</p>
+          )}
 
           <div className="flex items-center my-4">
             <div className="flex-grow border-t border-gray-300"></div>
@@ -119,15 +160,16 @@ const SignIn = () => {
               alt="Google logo"
               className="mr-2"
               height="20"
-              src="https://w7.pngwing.com/pngs/882/225/png-transparent-google-logo-google-logo-google-search-icon-google-text-logo-business-thumbnail.png" width={20}
+              src="https://w7.pngwing.com/pngs/882/225/png-transparent-google-logo-google-logo-google-search-icon-google-text-logo-business-thumbnail.png"
+              width={20}
             />
             Sign in with Google
           </button>
 
           <p className="mt-4 text-center text-gray-600">
-          Don’t have an account?
+            Don’t have an account?{" "}
             <a className="text-blue-600" href="#">
-            Sign Up for free
+              Sign Up for free
             </a>
           </p>
         </div>

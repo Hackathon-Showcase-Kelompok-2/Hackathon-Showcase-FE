@@ -1,47 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import axios from "axios";
 
 const SignUp = () => {
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [usernameError, setUsernameError] = useState(false);
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirm_password: "",
+  });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const togglePassword = () => {
-    setPasswordVisible(!passwordVisible);
+    setFormData((prevData) => ({
+      ...prevData,
+      showPassword: !prevData.showPassword,
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let valid = true;
+    setErrors({});
+    setIsSubmitting(true);
 
-    if (e.target.username.value.trim() === '') {
-      setUsernameError(true);
-      valid = false;
-    } else {
-      setUsernameError(false);
+    // Validasi form
+    let validationErrors = {};
+    if (!formData.username) validationErrors.username = "Username tidak boleh kosong.";
+    if (!formData.email) validationErrors.email = "Email tidak boleh kosong.";
+    if (!formData.password) validationErrors.password = "Password tidak boleh kosong.";
+    if (formData.password !== formData.confirm_password) {
+      validationErrors.confirm_password = "Password dan konfirmasi password harus sama.";
     }
 
-    if (!e.target.email.validity.valid) {
-      setEmailError(true);
-      valid = false;
-    } else {
-      setEmailError(false);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setIsSubmitting(false);
+      return;
     }
 
-    if (e.target.password.value.trim() === '') {
-      setPasswordError(true);
-      valid = false;
-    } else {
-      setPasswordError(false);
-    }
+    // Kirim data ke API
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/api/register", {
+        name: formData.username,
+        email: formData.email,
+        password: formData.password,
+        confirm_password: formData.confirm_password,
+      });
 
-    if (valid) {
-      alert('Form submitted successfully!');
+      // Jika berhasil, tampilkan pesan
+      alert("Registrasi berhasil!");
+      console.log("Response API:", response.data);
+
+      // Reset form
+      setFormData({
+        username: "",
+        email: "",
+        password: "",
+        confirm_password: "",
+      });
+    } catch (error) {
+      // Tangani error dari API
+      if (error.response && error.response.data) {
+        const apiErrors = error.response.data.errors || {};
+        setErrors(apiErrors);
+        alert("Registrasi gagal. Periksa kembali data Anda.");
+      } else {
+        console.error("Error:", error);
+        alert("Terjadi kesalahan. Silakan coba lagi.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-white flex items-center justify-center min-h-screen">
+    <div className="bg-white flex items-center justify-center min-h-screen w-screen">
       <div className="flex w-full h-full">
         {/* Left Section: Sign In Form */}
         <div className="w-1/2 flex flex-col justify-center p-8 bg-white">
@@ -62,11 +103,13 @@ const SignUp = () => {
                   name="username"
                   type="text"
                   placeholder="Username"
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
                   required
                 />
               </div>
-              {usernameError && <p className="text-red-500 text-sm mt-1">Username tidak boleh kosong.</p>}
+              {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
             </div>
 
             {/* Email */}
@@ -83,11 +126,13 @@ const SignUp = () => {
                   name="email"
                   type="email"
                   placeholder="Email"
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
                   required
                 />
               </div>
-              {emailError && <p className="text-red-500 text-sm mt-1">Email tidak valid.</p>}
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
 
             {/* Password */}
@@ -102,62 +147,50 @@ const SignUp = () => {
                 <input
                   id="password"
                   name="password"
-                  type={passwordVisible ? 'text' : 'password'}
+                  type="password"
                   placeholder="Password"
-                  className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
                   required
                 />
-                <button
-                  type="button"
-                  id="toggle-password"
-                  onClick={togglePassword}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
-                >
-                  <i className={passwordVisible ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
-                </button>
               </div>
-              {passwordError && <p className="text-red-500 text-sm mt-1">Password tidak boleh kosong.</p>}
+              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700" htmlFor="confirm_password">
+                Confirm Password
+              </label>
+              <input
+                id="confirm_password"
+                name="confirm_password"
+                type="password"
+                placeholder="Confirm Password"
+                value={formData.confirm_password}
+                onChange={handleInputChange}
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
+                required
+              />
+              {errors.confirm_password && <p className="text-red-500 text-sm mt-1">{errors.confirm_password}</p>}
             </div>
 
             {/* Submit Button */}
             <button
               className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               type="submit"
+              disabled={isSubmitting}
             >
-              Sign In
+              {isSubmitting ? "Submitting..." : "Sign Up"}
             </button>
           </form>
-
-          <div className="flex items-center my-4">
-            <div className="flex-grow border-t border-gray-300"></div>
-            <span className="mx-4 text-gray-500"> Or </span>
-            <div className="flex-grow border-t border-gray-300"></div>
-          </div>
-
-          <button
-            className="w-full py-2 px-4 border border-gray-300 text-gray-700 font-semibold rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center justify-center"
-          >
-            <img
-              alt="Google logo"
-              className="mr-2"
-              height="20"
-              src="https://w7.pngwing.com/pngs/882/225/png-transparent-google-logo-google-logo-google-search-icon-google-text-logo-business-thumbnail.png" width={20}
-            />
-            Sign in with Google
-          </button>
-
-          <p className="mt-4 text-center text-gray-600">
-            Alredy have an account?
-            <a className="text-blue-600" href="#">
-              Sign In
-            </a>
-          </p>
         </div>
 
         {/* Right Section: Image */}
         <div className="w-1/2 relative">
           <img
-            alt="Illustration of people working together in an office setting"
+            alt="Illustration"
             className="absolute inset-0 w-full h-full object-cover"
             src="../public/img/Sign Up.png"
           />
