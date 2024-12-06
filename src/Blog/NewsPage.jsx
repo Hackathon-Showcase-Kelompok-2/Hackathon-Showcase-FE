@@ -1,372 +1,70 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function NewsPage() {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    // Fetch data from API
+    fetch("http://127.0.0.1:8000/api/posts")
+      .then((response) => response.json())
+      .then((data) => {
+        setPosts(data.data); // Assuming API response structure contains `data` key
+      })
+      .catch((error) => console.error("Error fetching posts:", error));
+  }, []);
+
+  const handleLike = (postId) => {
+    // Update likes in the state
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.id === postId ? { ...post, likes_count: post.likes_count + 1 } : post
+      )
+    );
+
+    // Call API to update like count (if applicable)
+    fetch(`http://127.0.0.1:8000/api/posts/${postId}/like`, {
+      method: "POST",
+    }).catch((error) => console.error("Error liking post:", error));
+  };
+
   return (
-    <div className="bg-gray-100 p-6">
+    <div className="bg-gray-100 p-6 w-screen">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* News Item 1 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Group of people standing in front of a blue background with text"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/aZpa6qy64uJ9IFXWLIIIyTvNQWEQyya13rb9v29iMUQaRo9E.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Kamis, 24 Oktober 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>10 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">Ericsson Gelar Hackathon Dorong Inovasi AI dan Smart Manufacturing</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                <Link to="/blog/detailblog">
-                Read More
+          {posts.map((post) => (
+            <div key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <img
+                alt={post.title}
+                className="w-full h-48 object-cover"
+                src={`http://127.0.0.1:8000/storage/${post.image}`} // Assuming `image` is relative path
+                width="600"
+                height="400"
+              />
+              <div className="p-4">
+                <div className="flex items-center text-gray-500 text-sm mb-2">
+                  <i className="far fa-calendar-alt mr-2"></i>
+                  <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                  <i className="far fa-comments ml-4 mr-2"></i>
+                  <span>{post.comments_count} comment</span>
+                  <i
+                    className="far fa-thumbs-up ml-4 mr-2 cursor-pointer text-blue-600"
+                    onClick={() => handleLike(post.id)}
+                  ></i>
+                  <span>{post.likes_count} likes</span>
+                </div>
+                <h2 className="text-lg font-semibold mb-2 text-black">{post.title}</h2>
+                <p className="text-gray-700 mb-4">{post.content.slice(0, 100)}...</p>
+                <Link
+                  to={`/blog/${post.id}`}
+                  className="text-blue-600 hover:underline flex items-center"
+                >
+                  Read More
+                  <i className="fas fa-arrow-right ml-2"></i>
                 </Link>
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* News Item 2 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Three people holding a large check"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/o6qJrP3DslYrNZC2eqVmZSCfnJVTQuOg9Xv9NNrmNe7ZLCtnA.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Sabtu, 20 Oktober 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>20 comment</span>
               </div>
-              <h2 className="text-lg font-semibold mb-2">Mahasiswa Indonesia Juara Hackathon Blockchain Kompetisi Internasional</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
             </div>
-          </div>
-
-          {/* News Item 3 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Group of people posing in front of a blue background with text"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/8PksT0eSdhW2cyZXzyJoizpkgKITeKUAtz5JqCC07ytqFh2TA.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Rabu, 20 November 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>5 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">GovAI Hackathon Hasilkan Lima Solusi Generative AI untuk Indonesia</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* News Item 4 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Group of people standing in front of a blue background with text"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/aZpa6qy64uJ9IFXWLIIIyTvNQWEQyya13rb9v29iMUQaRo9E.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Kamis, 24 Oktober 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>10 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">Ericsson Gelar Hackathon Dorong Inovasi AI dan Smart Manufacturing</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* News Item 5 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Three people holding a large check"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/o6qJrP3DslYrNZC2eqVmZSCfnJVTQuOg9Xv9NNrmNe7ZLCtnA.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Sabtu, 20 Oktober 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>20 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">Mahasiswa Indonesia Juara Hackathon Blockchain Kompetisi Internasional</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* News Item 6 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Group of people posing in front of a blue background with text"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/8PksT0eSdhW2cyZXzyJoizpkgKITeKUAtz5JqCC07ytqFh2TA.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Rabu, 20 November 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>5 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">GovAI Hackathon Hasilkan Lima Solusi Generative AI untuk Indonesia</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* News Item 7 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Group of people standing in front of a blue background with text"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/aZpa6qy64uJ9IFXWLIIIyTvNQWEQyya13rb9v29iMUQaRo9E.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Kamis, 24 Oktober 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>10 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">Ericsson Gelar Hackathon Dorong Inovasi AI dan Smart Manufacturing</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* News Item 8 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Three people holding a large check"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/o6qJrP3DslYrNZC2eqVmZSCfnJVTQuOg9Xv9NNrmNe7ZLCtnA.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Sabtu, 20 Oktober 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>20 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">Mahasiswa Indonesia Juara Hackathon Blockchain Kompetisi Internasional</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* News Item 9 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Group of people posing in front of a blue background with text"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/8PksT0eSdhW2cyZXzyJoizpkgKITeKUAtz5JqCC07ytqFh2TA.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Rabu, 20 November 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>5 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">GovAI Hackathon Hasilkan Lima Solusi Generative AI untuk Indonesia</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* News Item 10 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Group of people standing in front of a blue background with text"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/aZpa6qy64uJ9IFXWLIIIyTvNQWEQyya13rb9v29iMUQaRo9E.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Kamis, 24 Oktober 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>10 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">Ericsson Gelar Hackathon Dorong Inovasi AI dan Smart Manufacturing</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* News Item 11 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Three people holding a large check"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/o6qJrP3DslYrNZC2eqVmZSCfnJVTQuOg9Xv9NNrmNe7ZLCtnA.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Sabtu, 20 Oktober 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>20 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">Mahasiswa Indonesia Juara Hackathon Blockchain Kompetisi Internasional</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* News Item 12 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Group of people posing in front of a blue background with text"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/8PksT0eSdhW2cyZXzyJoizpkgKITeKUAtz5JqCC07ytqFh2TA.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Rabu, 20 November 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>5 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">GovAI Hackathon Hasilkan Lima Solusi Generative AI untuk Indonesia</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* News Item 13 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Group of people standing in front of a blue background with text"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/aZpa6qy64uJ9IFXWLIIIyTvNQWEQyya13rb9v29iMUQaRo9E.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Kamis, 24 Oktober 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>10 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">Ericsson Gelar Hackathon Dorong Inovasi AI dan Smart Manufacturing</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* News Item 14 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Three people holding a large check"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/o6qJrP3DslYrNZC2eqVmZSCfnJVTQuOg9Xv9NNrmNe7ZLCtnA.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Sabtu, 20 Oktober 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>20 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">Mahasiswa Indonesia Juara Hackathon Blockchain Kompetisi Internasional</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* News Item 15 */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <img
-              alt="Group of people posing in front of a blue background with text"
-              className="w-full h-48 object-cover"
-              height="400"
-              src="https://storage.googleapis.com/a1aa/image/8PksT0eSdhW2cyZXzyJoizpkgKITeKUAtz5JqCC07ytqFh2TA.jpg"
-              width="600"
-            />
-            <div className="p-4">
-              <div className="flex items-center text-gray-500 text-sm mb-2">
-                <i className="far fa-calendar-alt mr-2"></i>
-                <span>Rabu, 20 November 2024</span>
-                <i className="far fa-comments ml-4 mr-2"></i>
-                <span>5 comment</span>
-              </div>
-              <h2 className="text-lg font-semibold mb-2">GovAI Hackathon Hasilkan Lima Solusi Generative AI untuk Indonesia</h2>
-              <a className="text-blue-600 hover:underline flex items-center" href="#">
-                Read More
-                <i className="fas fa-arrow-right ml-2"></i>
-              </a>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

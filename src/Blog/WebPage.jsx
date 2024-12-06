@@ -2,14 +2,14 @@ import React from "react";
 
 const WebPage = () => {
   return (
-    <div className="bg-gray-50 p-4 min-h-screen">
+    <div className="bg-gray-50 p-4 min-h-screen w-full">
       <div className="max-w-7xl mx-auto">
         {/* Search Bar */}
         <div className="mb-6 bg-white">
           <input
             type="text"
             placeholder="Cari"
-            className="w-full p-3 border border-gray-300 rounded-lg"
+            className="w-full p-3 border bg-white border-gray-300 rounded-lg"
           />
         </div>
 
