@@ -2,7 +2,7 @@ import React from "react";
 
 const CardEvent = () => {
   return (
-    <div className="flex items-center justify-center bg-gray-100 py-4 px-4">
+    <div className="flex items-center  justify-center bg-gray-100 py-4 px-4">
       <div className="bg-blue-50 rounded-2xl p-10 flex flex-col items-center relative overflow-hidden w-full">
         {/* Decorative Circles */}
         <div
