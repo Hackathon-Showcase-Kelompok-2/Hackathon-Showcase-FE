@@ -6,9 +6,9 @@ const Card = () => {
       <div className="bg-yellow-500 rounded-2xl p-10 flex flex-col items-center relative overflow-hidden w-full">
         <img 
           alt="Illustration of people working on a project" 
-          className="w-1/3" 
+          className="w-1/" 
           height="150" 
-          src="../../public/img/CarePoint.png" 
+          src="../../public/img/daftar_project.png" 
           width="150" 
         />
         <div className="flex flex-col">

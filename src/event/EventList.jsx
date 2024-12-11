@@ -1,71 +1,79 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-const EventList = () => {
+function EventList() {
   const [events, setEvents] = useState([]);
 
+  // Fetch data dari API
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/api/events");
-        const result = await response.json();
-
-        // Periksa apakah result.data ada
-        if (result.data) {
-          // Masukkan data ke dalam array untuk di-mapping
-          setEvents([result.data]);
-        } else {
-          console.error("Data not found in API response");
-        }
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      }
-    };
-
-    fetchEvents();
+    fetch("http://127.0.0.1:8000/api/events")
+      .then((response) => response.json())
+      .then((data) => {
+          setEvents(data.data);
+      })
+      .catch((error) => console.error("Error fetching events:", error));
   }, []);
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-xl font-bold mb-6">Event Akan Datang</h1>
-      {events.map((event, index) => (
+    <div className="flex flex-col items-center w-screen bg-white">
+      {/* Title and "Semua" button */}
+      <div className="flex justify-between w-full max-w-[1362.77px] mb-6">
+        <h1 className="text-2xl font-bold text-black">Event Akan Datang</h1>
+        <button className="text-blue-600 bg-white">Semua</button>
+      </div>
+
+      {/* Event List */}
+      {events.map((event) => (
         <div
-          key={index}
-          className="bg-white rounded-lg shadow-md overflow-hidden mb-6"
+          key={event.id}
+          className="border border-gray-300 rounded-lg w-full max-w-[1362.77px] mb-6 p-6"
         >
-          <div className="flex flex-col md:flex-row">
-            {/* Thumbnail */}
-            <div className="w-full md:w-1/3">
-              <img
-                src={event.thumbnail || "https://via.placeholder.com/150"}
-                alt="Event Thumbnail"
-                className="w-full h-full object-cover"
-              />
+          {/* Image */}
+          <div className="relative w-full">
+            <img
+              src={`http://127.0.0.1:8000/storage/event_images/${event.image}`}
+              alt={event.name}
+              className="rounded-lg w-full text-black h-[250px] object-cover"
+            />
+          </div>
+
+          {/* Event Info */}
+          <div className="flex justify-between items-center mt-4 text-gray-600 text-sm">
+            <div className="flex items-center">
+              <span className="mr-2">📅</span>
+              <span>{event.date}</span>
             </div>
-            {/* Konten */}
-            <div className="p-4 flex-1">
-              <h2 className="text-lg font-bold text-gray-800">
-                {event.name || "Nama event tidak tersedia"}
-              </h2>
-              <p className="text-sm text-gray-500 mb-2">
-                {event.date || "Tanggal tidak tersedia"}
-              </p>
-              <p className="text-sm text-gray-600 mb-4">
-                {event.description || "Deskripsi tidak tersedia"}
-              </p>
-              <div className="flex space-x-4">
-                <button className="bg-blue-500 text-white px-4 py-2 rounded-md">
-                  Detail Events
-                </button>
-                <button className="bg-blue-700 text-white px-4 py-2 rounded-md">
-                  Daftar Sekarang
-                </button>
-              </div>
+            <div className="flex items-center">
+              <span className="mr-2">📍</span>
+              <span>Online</span> {/* Tambahkan lokasi jika tersedia di API */}
             </div>
+            <div className="flex items-center px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-600">
+              <span className="mr-2">🔖</span>
+              <span>Menengah</span> {/* Tambahkan level jika tersedia di API */}
+            </div>
+          </div>
+
+          {/* Event Title */}
+          <h2 className="text-blue-600 font-bold text-xl mt-4">{event.name}</h2>
+          <p className="text-black">{event.description}</p>
+
+          {/* Buttons */}
+          <div className="flex gap-4 mt-6">
+            <Link to={`/events/${event.id}`}>
+              <button className="w-[288px] h-[57px] border border-blue-600 text-blue-600 rounded-lg bg-white">
+                Detail Event
+              </button>
+            </Link>
+            <Link to={`/events/${event.id}/regris`}>
+              <button className="w-[288px] h-[57px] bg-blue-600 text-white rounded-lg">
+                Daftar Sekarang
+              </button>
+            </Link>
           </div>
         </div>
       ))}
     </div>
   );
-};
+}
 
 export default EventList;

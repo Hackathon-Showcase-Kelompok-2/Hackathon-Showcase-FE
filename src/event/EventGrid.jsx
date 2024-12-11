@@ -1,71 +1,78 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const EventGrid = () => {
   const [events, setEvents] = useState([]);
 
   // Fetch data dari API
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/api/events");
-        const result = await response.json();
-
-        // Pastikan data berada dalam bentuk array
-        if (result.data) {
-          setEvents([result.data]); // Masukkan data ke dalam array
-        } else {
-          console.error("Data event tidak ditemukan di response API");
+    fetch("http://127.0.0.1:8000/api/events")
+      .then((response) => response.json())
+      .then((data) => {
+        if (data && data.data) {
+          // Urutkan berdasarkan tanggal terbaru dan ambil 6 event pertama
+          const sortedEvents = data.data
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(0, 6);
+          setEvents(sortedEvents);
         }
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      }
-    };
-
-    fetchEvents();
+      })
+      .catch((error) => console.error("Error fetching events:", error));
   }, []);
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-xl font-bold mb-6 text-center">
-        Semua Events Hackathon Terbaru
-      </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {events.length > 0 ? (
-          events.map((event, index) => (
-            <div
-              key={event.id || index} // Gunakan id jika tersedia, fallback ke index
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-            >
-              {/* Thumbnail */}
-              <div className="w-full">
-                <img
-                  src={event.thumbnail || "https://via.placeholder.com/150"}
-                  alt={event.name || "Event Thumbnail"}
-                  className="w-full h-48 object-cover"
-                />
+    <div className="flex flex-col items-center bg-white py-10">
+      {/* Title and "Semua" button */}
+      <div className="flex justify-between w-full max-w-[1362.77px] mb-6">
+        <h1 className="text-2xl font-bold text-black">
+          Semua Events Hackathon Terbaru
+        </h1>
+        <button className="text-blue-600 bg-white">Semua</button>
+      </div>
+
+      {/* Event Grid */}
+      <div className="grid grid-cols-3 gap-6 w-full max-w-[1362.77px]">
+        {events.map((event) => (
+          <div
+            key={event.id}
+            className="border border-gray-300 rounded-lg w-[444px] h-[481px] flex flex-col items-center text-black"
+          >
+            {/* Event Image */}
+            <img
+              src={`http://127.0.0.1:8000/storage/event_images/${event.image}`}
+              alt={event.name}
+              className="w-[404px] h-[299px] rounded-lg text-black mt-4 object-cover"
+            />
+
+            {/* Event Info */}
+            <div className="flex justify-between items-center w-full px-4 mt-4 text-gray-600 text-sm">
+              <div className="flex items-center">
+                <span className="mr-2">📅</span>
+                <span>{event.date}</span>
               </div>
-              {/* Konten */}
-              <div className="p-4">
-                <p className="text-sm text-gray-500 mb-2">
-                  <span className="mr-2">{event.date || "Tanggal tidak tersedia"}</span>
-                </p>
-                <h2 className="text-lg font-bold text-gray-800 mb-4">
-                  {event.name || "Judul tidak tersedia"}
-                </h2>
-                <p className="text-sm text-gray-600 mb-4">
-                  {event.description || "Deskripsi tidak tersedia"}
-                </p>
-                <button className="bg-blue-700 text-white w-full py-2 rounded-md hover:bg-blue-800">
-                  Daftar Sekarang
-                </button>
+              <div className="flex items-center">
+                <span className="mr-2">📍</span>
+                <span>{event.location || "Online"}</span>
+              </div>
+              <div className="flex items-center">
+                <span className="mr-2">🔖</span>
+                <span>{event.eventcategory || "Menengah"}</span>
               </div>
             </div>
-          ))
-        ) : (
-          <p className="text-center col-span-full text-gray-600">
-            Tidak ada event yang tersedia saat ini.
-          </p>
-        )}
+
+            {/* Event Title */}
+            <h2 className="text-blue-600 font-bold text-base mt-4 text-center px-4">
+              {event.name}
+            </h2>
+
+            {/* Button */}
+            <Link to={`/events/${event.id}/regris`}>
+              <button className="w-[404px] h-[57px] bg-blue-600 text-white rounded-lg mt-4">
+                Daftar Sekarang
+              </button>
+            </Link>
+          </div>
+        ))}
       </div>
     </div>
   );
