@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -8,20 +10,14 @@ const SignUp = () => {
     password: "",
     confirm_password: "",
   });
+
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const togglePassword = () => {
-    setFormData((prevData) => ({
-      ...prevData,
-      showPassword: !prevData.showPassword,
-    }));
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
     }));
   };
@@ -31,13 +27,16 @@ const SignUp = () => {
     setErrors({});
     setIsSubmitting(true);
 
-    // Validasi form
-    let validationErrors = {};
-    if (!formData.username) validationErrors.username = "Username tidak boleh kosong.";
+    // Validasi input
+    const validationErrors = {};
+    if (!formData.username)
+      validationErrors.username = "Username tidak boleh kosong.";
     if (!formData.email) validationErrors.email = "Email tidak boleh kosong.";
-    if (!formData.password) validationErrors.password = "Password tidak boleh kosong.";
+    if (!formData.password)
+      validationErrors.password = "Password tidak boleh kosong.";
     if (formData.password !== formData.confirm_password) {
-      validationErrors.confirm_password = "Password dan konfirmasi password harus sama.";
+      validationErrors.confirm_password =
+        "Password dan konfirmasi password harus sama.";
     }
 
     if (Object.keys(validationErrors).length > 0) {
@@ -48,16 +47,23 @@ const SignUp = () => {
 
     // Kirim data ke API
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/register", {
+      await axios.post("http://127.0.0.1:8000/api/register", {
         name: formData.username,
         email: formData.email,
         password: formData.password,
         confirm_password: formData.confirm_password,
       });
 
-      // Jika berhasil, tampilkan pesan
-      alert("Registrasi berhasil!");
-      console.log("Response API:", response.data);
+      // Tampilkan notifikasi sukses menggunakan React-Toastify
+      toast.success("Register Success! Redirecting to Sign In...", {
+        position: "top-right",
+        autoClose: 3000, // Otomatis hilang dalam 3 detik
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        icon: "✔️",
+      });
 
       // Reset form
       setFormData({
@@ -66,15 +72,18 @@ const SignUp = () => {
         password: "",
         confirm_password: "",
       });
+
+      // Arahkan ke halaman Sign In setelah 2 detik
+      setTimeout(() => {
+        window.location.href = "/signin";
+      }, 2000);
     } catch (error) {
-      // Tangani error dari API
       if (error.response && error.response.data) {
-        const apiErrors = error.response.data.errors || {};
-        setErrors(apiErrors);
-        alert("Registrasi gagal. Periksa kembali data Anda.");
+        setErrors(error.response.data.errors || {});
       } else {
-        console.error("Error:", error);
-        alert("Terjadi kesalahan. Silakan coba lagi.");
+        toast.error("Terjadi kesalahan. Silakan coba lagi.", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
       }
     } finally {
       setIsSubmitting(false);
@@ -82,119 +91,136 @@ const SignUp = () => {
   };
 
   return (
-    <div className="bg-white flex items-center justify-center min-h-screen w-screen">
-      <div className="flex w-full h-full">
-        {/* Left Section: Sign In Form */}
-        <div className="w-1/2 flex flex-col justify-center p-8 bg-white">
-          <h2 className="text-2xl font-bold mb-2 text-center">Sign Up</h2>
-          <p className="text-gray-600 mb-6 text-center">Silakan masukkan username, email, dan password Anda</p>
-          <form id="signin-form" className="space-y-4" onSubmit={handleSubmit}>
-            {/* Username */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700" htmlFor="username">
-                Username
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i className="fas fa-user text-gray-400"></i>
-                </div>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  placeholder="Username"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
-                  required
-                />
-              </div>
-              {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
-            </div>
+    <div className="flex min-h-screen w-screen">
+      {/* Tambahkan ToastContainer */}
+      <ToastContainer />
 
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700" htmlFor="email">
-                Email
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i className="fas fa-envelope text-gray-400"></i>
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
-                  required
-                />
-              </div>
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700" htmlFor="password">
-                Password
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i className="fas fa-lock text-gray-400"></i>
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
-                  required
-                />
-              </div>
-              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-            </div>
-
-            {/* Confirm Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700" htmlFor="confirm_password">
-                Confirm Password
-              </label>
-              <input
-                id="confirm_password"
-                name="confirm_password"
-                type="password"
-                placeholder="Confirm Password"
-                value={formData.confirm_password}
-                onChange={handleInputChange}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
-                required
-              />
-              {errors.confirm_password && <p className="text-red-500 text-sm mt-1">{errors.confirm_password}</p>}
-            </div>
-
-            {/* Submit Button */}
-            <button
-              className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              type="submit"
-              disabled={isSubmitting}
+      {/* Bagian Kiri - Form */}
+      <div className="w-1/2 bg-white flex flex-col justify-center items-center px-12">
+        <h1 className="text-3xl font-bold mb-4 text-center text-black">
+          Sign Up
+        </h1>
+        <p className="text-gray-500 text-center mb-8">
+          Silakan masukkan informasi Anda untuk membuat akun
+        </p>
+        <form className="w-full max-w-md" onSubmit={handleSubmit}>
+          {/* Username */}
+          <div className="mb-6">
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700 mb-1"
             >
-              {isSubmitting ? "Submitting..." : "Sign Up"}
-            </button>
-          </form>
-        </div>
+              Username
+            </label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              placeholder="Username"
+              value={formData.username}
+              onChange={handleInputChange}
+              className="w-full h-[51px] px-3 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+              required
+            />
+            {errors.username && (
+              <p className="text-red-500 text-sm">{errors.username}</p>
+            )}
+          </div>
 
-        {/* Right Section: Image */}
-        <div className="w-1/2 relative">
-          <img
-            alt="Illustration"
-            className="absolute inset-0 w-full h-full object-cover"
-            src="../public/img/Sign Up.png"
-          />
-        </div>
+          {/* Email */}
+          <div className="mb-6">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="w-full h-[51px] px-3 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+              required
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email}</p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div className="mb-6">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleInputChange}
+              className="w-full h-[51px] px-3 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+              required
+            />
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password}</p>
+            )}
+          </div>
+
+          {/* Confirm Password */}
+          <div className="mb-6">
+            <label
+              htmlFor="confirm_password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Confirm Password
+            </label>
+            <input
+              id="confirm_password"
+              name="confirm_password"
+              type="password"
+              placeholder="Confirm Password"
+              value={formData.confirm_password}
+              onChange={handleInputChange}
+              className="w-full h-[51px] px-3 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+              required
+            />
+            {errors.confirm_password && (
+              <p className="text-red-500 text-sm">{errors.confirm_password}</p>
+            )}
+          </div>
+
+          {/* Tombol Sign Up */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full h-[51px] bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            {isSubmitting ? "Processing..." : "Sign Up"}
+          </button>
+        </form>
+
+        {/* Link Sign In */}
+        <p className="text-gray-500 mt-6">
+          Already have an account?{" "}
+          <a href="/signin" className="text-blue-500 hover:underline">
+            Sign In
+          </a>
+        </p>
+      </div>
+
+      {/* Bagian Kanan - Gambar */}
+      <div
+        className="w-1/2 bg-cover bg-center"
+        style={{ backgroundImage: "url('../../public/img/login.png')" }}
+      >
+        {/* Tambahkan gambar di folder public */}
       </div>
     </div>
   );
