@@ -9,9 +9,7 @@ function EventList() {
     fetch("http://127.0.0.1:8000/api/events")
       .then((response) => response.json())
       .then((data) => {
-        if (data && data.data) {
           setEvents(data.data);
-        }
       })
       .catch((error) => console.error("Error fetching events:", error));
   }, []);
@@ -33,9 +31,9 @@ function EventList() {
           {/* Image */}
           <div className="relative w-full">
             <img
-              src={event.image} // Ganti jika ada URL gambar dari API
+              src={`http://127.0.0.1:8000/storage/event_images/${event.image}`}
               alt={event.name}
-              className="rounded-lg w-full h-[250px] object-cover"
+              className="rounded-lg w-full text-black h-[250px] object-cover"
             />
           </div>
 
@@ -66,9 +64,11 @@ function EventList() {
                 Detail Event
               </button>
             </Link>
-            <button className="w-[288px] h-[57px] bg-blue-600 text-white rounded-lg">
-              Daftar Sekarang
-            </button>
+            <Link to={`/events/${event.id}/regris`}>
+              <button className="w-[288px] h-[57px] bg-blue-600 text-white rounded-lg">
+                Daftar Sekarang
+              </button>
+            </Link>
           </div>
         </div>
       ))}

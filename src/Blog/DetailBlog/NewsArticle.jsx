@@ -44,7 +44,7 @@ const NewsArticle = () => {
           alt={articleData.title}
           className="w-full mb-4"
           height="300"
-          src={`http://127.0.0.1:8000/storage/${articleData.image}`}
+          src={`http://127.0.0.1:8000/storage/post_images/${articleData.image}`}
           width="600"
         />
         <p className="mb-4">{articleData.content}</p>

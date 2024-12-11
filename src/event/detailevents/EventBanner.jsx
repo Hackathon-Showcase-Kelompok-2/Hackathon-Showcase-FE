@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const EventBanner = () => {
   const { id } = useParams(); // Mengambil ID dari parameter URL
@@ -12,7 +12,9 @@ const EventBanner = () => {
     // Fetch data dari API berdasarkan ID
     const fetchEventData = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/events/${id}`);
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/events/${id}`
+        );
         setEventData(response.data.data);
         setLoading(false);
       } catch (err) {
@@ -62,9 +64,7 @@ const EventBanner = () => {
           {/* Date and Time */}
           <div className="flex items-center mb-2 text-sm">
             <span className="mr-2">📅</span>
-            <span>
-              {eventData.date} | WIB
-            </span>
+            <span>{eventData.date} | WIB</span>
           </div>
 
           {/* Location */}
@@ -75,9 +75,11 @@ const EventBanner = () => {
 
           {/* Buttons */}
           <div className="flex items-center gap-4">
-            <button className="w-[329px] h-[57px] bg-blue-600 text-white rounded-lg">
-              Daftar Sekarang
-            </button>
+            <Link to={`/events/${eventData.id}/regris`}>
+              <button className="w-[329px] h-[57px] bg-blue-600 text-white rounded-lg">
+                Daftar Sekarang
+              </button>
+            </Link>
             <button className="w-[429px] h-[57px] border border-yellow-500 text-yellow-500 rounded-lg">
               Tambah ke Kalender
             </button>
