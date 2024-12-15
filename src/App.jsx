@@ -20,6 +20,9 @@ import EditProfile from "./pages/EditProfile";
 import Thread from "./pages/Thread";
 import Profile from "./pages/Profile";
 import CreateThread from "./thread/Creat Thread/CreateThread";
+import MyProject from "./pages/MyProject";
+import UpdateProject from "./pages/UpdateProject";
+import ProfileTeam from "./pages/ProfileTeam";
 
 function App() {
   return (
@@ -37,6 +40,22 @@ function App() {
           <Route path="/forum" element={<Forum />} />
           <Route path="/award" element={<Award />} />
           <Route
+            path="/myproject/:id"
+            element={
+              <ProtectedRoute>
+                <MyProject />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/update-project/:id"
+            element={
+              <ProtectedRoute>
+                <UpdateProject />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/editprofile/:id"
             element={
               <ProtectedRoute>
@@ -53,7 +72,7 @@ function App() {
             }
           />
           <Route
-            path="/profile/:id"
+            path="/profile"
             element={
               <ProtectedRoute>
                 <Profile />
@@ -62,7 +81,7 @@ function App() {
           />
           <Route path="/thread/:id" element={<Thread />} />
           <Route
-            path="/dashboard/:id"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
@@ -80,6 +99,7 @@ function App() {
           <Route path="/events/:id/regris" element={<EventRegistration />} />
           <Route path="/blog/:id" element={<DetailBlog />} />
           <Route path="/events/:id" element={<DetailEvent />} />
+          <Route path="/profile-team/:id" element={<ProfileTeam />} />
         </Routes>
       </Layout>
     </Router>

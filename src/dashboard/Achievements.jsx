@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const AchievementCard = ({ title, date, eventName, awardIcon }) => {
   return (
@@ -42,33 +42,95 @@ const AchievementCard = ({ title, date, eventName, awardIcon }) => {
 };
 
 const Achievements = () => {
+  const [awards, setAwards] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAwards = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          console.error("Auth token not found in localStorage");
+          return;
+        }
+
+        // Fetch user data to get user ID
+        const userResponse = await fetch("http://127.0.0.1:8000/api/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!userResponse.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+
+        const userData = await userResponse.json();
+        const userId = userData.id;
+
+        // Fetch awards using user ID
+        const awardsResponse = await fetch(`http://127.0.0.1:8000/api/awards?user_id=${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!awardsResponse.ok) {
+          throw new Error("Failed to fetch awards");
+        }
+
+        const awardsData = await awardsResponse.json();
+        const filteredAwards = awardsData.filter((member) => member.team_id === userId);
+        console.log(filteredAwards);
+        setAwards(filteredAwards);
+      } catch (error) {
+        console.error(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAwards();
+  }, []);
+
+  if (loading) {
+    return <div className="text-center py-10">Loading...</div>;
+  }
+
   return (
     <div className="flex flex-col items-center py-10 bg-white">
       {/* Header */}
       <div className="w-[1368px] text-center mb-8">
         <div className="flex justify-center items-center text-blue-600 mb-4">
-          <span className="text-3xl">&#127942;</span> {/* Icon Piala */}
+          <span className="text-3xl">🏆</span> {/* Icon Piala */}
           <h1 className="text-2xl font-bold ml-2">Sertifikat & Pencapaian</h1>
         </div>
-        <p className="text-gray-600">
+        {/* <p className="text-gray-600">
           Selamat! Kamu menjuarai Hackathon, klik tombol dibawah untuk mendapatkan sertifikatmu!
-        </p>
+        </p> */}
       </div>
-
-      {/* Cards */}
       <div className="space-y-8"> {/* Jarak antar card */}
-        <AchievementCard
-          title="Hackathon Juara 2"
-          date="Mei 2024"
-          eventName="Web Dev Summit"
-          awardIcon={<span className="text-yellow-500 text-2xl">&#9733;</span>} // Bintang emas
-        />
-        <AchievementCard
-          title="Best Innovation Award"
-          date="Mei 2024"
-          eventName="AI Innovation Challenge"
-          awardIcon={<span className="text-blue-500 text-2xl">&#9733;</span>} // Bintang biru
-        />
+        {awards.length === 0 ? (
+          <div className="text-center">
+            <p className="text-gray-600 text-lg mb-4">
+              Belum ada Award
+            </p>
+          </div>
+        ) : (
+          awards.map((award) => (
+            <AchievementCard
+              key={award.id}
+              title={award.title}
+              date={new Date(award.date).toLocaleDateString("id-ID", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+              eventName={award.category}
+              awardIcon={<span className="text-yellow-500 text-2xl">★</span>} // Bintang emas
+            />
+          ))
+        )}
       </div>
     </div>
   );

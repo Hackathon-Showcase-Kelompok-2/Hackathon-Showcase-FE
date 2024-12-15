@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import { useParams, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 
-const CombinedProjectForm = () => {
+const UpdateProjectForm = () => {
+  const { id } = useParams(); // Mengambil ID dari URL
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     title: "",
     category_id: "",
     difficulty_id: "",
-    objective: "", // Ganti 'description' menjadi 'objective'
-    content: "",   // Menambahkan field content
+    objective: "",
+    content: "",
     link_code: "",
     link_demo: "",
     image: null,
@@ -19,8 +23,8 @@ const CombinedProjectForm = () => {
   const [categories, setCategories] = useState([]);
   const [difficulties, setDifficulties] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [projectOwnerId, setProjectOwnerId] = useState(null);
 
-  // Fetch categories and difficulties from API
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("authToken");
@@ -32,29 +36,47 @@ const CombinedProjectForm = () => {
       }
 
       try {
-        const headers = {
-          'Authorization': `Bearer ${token}`,
-        };
+        const headers = { Authorization: `Bearer ${token}` };
 
-        // Fetch categories and difficulties concurrently
+        // Fetch project data
+        const projectRes = await axios.get(
+          `http://127.0.0.1:8000/api/projects/${id}`,
+          { headers }
+        );
+
+        const projectData = projectRes.data;
+        setFormData({
+          title: projectData.title,
+          category_id: projectData.category_id,
+          difficulty_id: projectData.difficulty_id,
+          objective: projectData.objective,
+          content: projectData.content,
+          link_code: projectData.link_code,
+          link_demo: projectData.link_demo,
+          image: null,
+          documentation: null,
+        });
+
+        setProjectOwnerId(projectData.user_id);
+
+        // Fetch categories and difficulties
         const [categoriesRes, difficultiesRes] = await Promise.all([
           axios.get("http://127.0.0.1:8000/api/categories", { headers }),
           axios.get("http://127.0.0.1:8000/api/difficulties", { headers }),
         ]);
 
-        // Assuming the API returns the data as a direct array or object with a 'data' property
         setCategories(categoriesRes.data?.data || categoriesRes.data || []);
         setDifficulties(difficultiesRes.data?.data || difficultiesRes.data || []);
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Gagal mengambil data kategori atau kesulitan.", {
+        toast.error("Gagal mengambil data proyek atau data pendukung.", {
           icon: "❌",
         });
       }
     };
 
     fetchData();
-  }, []);
+  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -77,17 +99,34 @@ const CombinedProjectForm = () => {
       return;
     }
 
-    const payload = new FormData();
-    Object.keys(formData).forEach((key) => {
-      if (formData[key]) {
-        payload.append(key, formData[key]);
-      }
-    });
-
     try {
+      // Fetch logged-in user data
+      const userRes = await axios.get("http://127.0.0.1:8000/api/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const loggedInUserId = userRes.data.id;
+
+      // Validate ownership
+      if (loggedInUserId !== projectOwnerId) {
+        toast.error("Anda tidak memiliki izin untuk mengedit proyek ini.", {
+          icon: "❌",
+        });
+        return;
+      }
+
+      const payload = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (formData[key]) {
+          payload.append(key, formData[key]);
+        }
+      });
+      payload.append("_method", "put"); // Menggunakan metode PUT
+
       setIsSubmitting(true);
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/projects",
+
+      await axios.post(
+        `http://127.0.0.1:8000/api/projects/${id}`,
         payload,
         {
           headers: {
@@ -97,11 +136,11 @@ const CombinedProjectForm = () => {
         }
       );
 
-      toast.success("Proyek berhasil diunggah!", { icon: "✅" });
-      console.log("Response:", response.data);
+      toast.success("Proyek berhasil diperbarui!", { icon: "✅" });
+      navigate(`/myproject/${id}`); // Redirect ke halaman detail proyek
     } catch (error) {
-      console.error("Error submitting project:", error);
-      toast.error("Pengunggahan gagal. Pastikan data Anda valid.", {
+      console.error("Error updating project:", error);
+      toast.error("Gagal memperbarui proyek. Pastikan data valid.", {
         icon: "❌",
       });
     } finally {
@@ -111,9 +150,8 @@ const CombinedProjectForm = () => {
 
   return (
     <div className="min-w-screen min-h-screen p-8 space-y-12 bg-white w-screen text-black">
-      <ToastContainer /> {/* Toastify Container */}
+      <ToastContainer />
       <form onSubmit={handleSubmit}>
-        {/* Form Section */}
         <div className="flex flex-col lg:flex-row items-center border border-gray-300 rounded-lg shadow-lg">
           <div className="w-full lg:w-1/3 p-6">
             <img
@@ -123,13 +161,10 @@ const CombinedProjectForm = () => {
             />
           </div>
           <div className="w-full lg:w-2/3 p-6">
-            <h1 className="text-2xl font-semibold mb-6">Formulir Proyek</h1>
+            <h1 className="text-2xl font-semibold mb-6">Edit Proyek</h1>
             <div className="space-y-6">
               <div>
-                <label
-                  className="block text-lg font-semibold mb-2"
-                  htmlFor="title"
-                >
+                <label className="block text-lg font-semibold mb-2" htmlFor="title">
                   Nama Proyek
                 </label>
                 <input
@@ -143,10 +178,7 @@ const CombinedProjectForm = () => {
                 />
               </div>
               <div>
-                <label
-                  className="block text-lg font-semibold mb-2"
-                  htmlFor="category_id"
-                >
+                <label className="block text-lg font-semibold mb-2" htmlFor="category_id">
                   Kategori Proyek
                 </label>
                 <select
@@ -157,22 +189,15 @@ const CombinedProjectForm = () => {
                   onChange={handleInputChange}
                 >
                   <option value="">Pilih Kategori*</option>
-                  {categories.length > 0 ? (
-                    categories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                      </option>
-                    ))
-                  ) : (
-                    <option value="">Tidak ada kategori</option>
-                  )}
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
-                <label
-                  className="block text-lg font-semibold mb-2"
-                  htmlFor="difficulty_id"
-                >
+                <label className="block text-lg font-semibold mb-2" htmlFor="difficulty_id">
                   Tingkat Kesulitan
                 </label>
                 <select
@@ -183,45 +208,34 @@ const CombinedProjectForm = () => {
                   onChange={handleInputChange}
                 >
                   <option value="">Pilih Tingkat*</option>
-                  {difficulties.length > 0 ? (
-                    difficulties.map((difficulty) => (
-                      <option key={difficulty.id} value={difficulty.id}>
-                        {difficulty.name}
-                      </option>
-                    ))
-                  ) : (
-                    <option value="">Tidak ada tingkat kesulitan</option>
-                  )}
+                  {difficulties.map((difficulty) => (
+                    <option key={difficulty.id} value={difficulty.id}>
+                      {difficulty.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
-                <label
-                  className="block text-lg font-semibold mb-2"
-                  htmlFor="objective"
-                >
+                <label className="block text-lg font-semibold mb-2" htmlFor="objective">
                   Tujuan Proyek
                 </label>
                 <textarea
                   className="w-full bg-white border border-gray-300 rounded-lg p-4"
                   id="objective"
-                  name="objective" // Ganti 'description' menjadi 'objective'
+                  name="objective"
                   value={formData.objective}
                   onChange={handleInputChange}
                   placeholder="Visi & misi proyek anda*"
                 ></textarea>
               </div>
-              {/* Konten Proyek */}
               <div>
-                <label
-                  className="block text-lg font-semibold mb-2"
-                  htmlFor="content"
-                >
+                <label className="block text-lg font-semibold mb-2" htmlFor="content">
                   Konten Proyek
                 </label>
                 <textarea
                   className="w-full bg-white border border-gray-300 rounded-lg p-4"
                   id="content"
-                  name="content" // Menambahkan input untuk 'content'
+                  name="content"
                   value={formData.content}
                   onChange={handleInputChange}
                   placeholder="Deskripsi proyek anda*"
@@ -231,7 +245,6 @@ const CombinedProjectForm = () => {
           </div>
         </div>
 
-        {/* Upload Section */}
         <div className="border border-gray-300 rounded-lg shadow-lg p-8 mt-8">
           <h1 className="text-2xl font-semibold mb-6">Upload Proyek</h1>
           <div className="space-y-6">
@@ -243,9 +256,7 @@ const CombinedProjectForm = () => {
                 className="absolute opacity-0 w-fit h-fit cursor-pointer"
               />
               <i className="fas fa-upload text-gray-400 text-3xl"></i>
-              <span className="ml-2 text-gray-400">
-                Upload Image Thumbnail*
-              </span>
+              <span className="ml-2 text-gray-400">Upload Image Thumbnail*</span>
             </div>
             <div>
               <label className="block mb-2">Link Repo</label>
@@ -281,14 +292,13 @@ const CombinedProjectForm = () => {
           </div>
         </div>
 
-        {/* Submit Button */}
         <div className="mt-8 flex justify-end">
           <button
             type="submit"
             disabled={isSubmitting}
             className="bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-700 disabled:bg-gray-400"
           >
-            {isSubmitting ? "Mengirim..." : "Kirim Proyek"}
+            {isSubmitting ? "Mengirim..." : "Perbarui Proyek"}
           </button>
         </div>
       </form>
@@ -296,4 +306,4 @@ const CombinedProjectForm = () => {
   );
 };
 
-export default CombinedProjectForm;
+export default UpdateProjectForm;

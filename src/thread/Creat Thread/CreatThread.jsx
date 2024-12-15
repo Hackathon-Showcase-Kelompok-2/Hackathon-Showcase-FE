@@ -15,7 +15,7 @@ const CreatThread = () => {
                 Judul Thread
               </label>
               <input
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block bg-white w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                 id="judul-thread"
                 placeholder="Tulis Judul Thread"
                 type="text"
@@ -26,7 +26,7 @@ const CreatThread = () => {
                 Deskripsi Thread
               </label>
               <textarea
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 bg-white block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                 id="deskripsi-thread"
                 placeholder="Tulis Deskripsi Thread"
                 rows="4"

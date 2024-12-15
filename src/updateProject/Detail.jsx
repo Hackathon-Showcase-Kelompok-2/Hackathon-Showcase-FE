@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
 const Detail = () => {
@@ -63,48 +63,25 @@ const Detail = () => {
             }
           />
           <div className="absolute inset-0 flex flex-col justify-center text-left p-6">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
               {project.title}
             </h1>
             <p className="text-xl md:text-2xl text-white mb-6">
               {project.description}
             </p>
-            <div className="flex flex-wrap gap-4 items-center">
-              {/* Tombol Like */}
-              <button
-                className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg"
-                onClick={async () => {
-                  try {
-                    await axios.post(
-                      `http://127.0.0.1:8000/api/projectcomment/${id}/like`,
-                      {},
-                      {
-                        headers: {
-                          Authorization: `Bearer ${localStorage.getItem(
-                            "authToken"
-                          )}`,
-                        },
-                      }
-                    );
-                    setProject((prev) => ({
-                      ...prev,
-                      likes_count: (prev.likes_count || 0) + 1,
-                    }));
-                  } catch (error) {
-                    console.error("Error liking the project:", error);
-                  }
-                }}
-              >
-                ❤️ {project.likes_count || 0} Likes
-              </button>
-              {/* Tombol Comment */}
-              <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg">
-                💬 {project.project_comments_count || 0} Comments
-              </button>
-              {/* Tombol Share */}
-              <button className="flex items-center bg-white text-black border border-gray-400 px-4 py-2 rounded-lg">
-                🔄 Share
-              </button>
+            <div className="flex flex-wrap gap-4 items-center justify-start">
+              {/* Tombol Unggah Proyek Baru */}
+              <Link to="/create-project">
+                <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg">
+                  Unggah Proyek Baru
+                </button>
+              </Link>
+              {/* Tombol Update Proyek */}
+              <Link to={`/update-project/${id}`}>
+                <button className="flex items-center bg-transparent text-blue-600 border border-blue-600 px-4 py-2 rounded-lg">
+                  Update Proyek
+                </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -135,7 +112,7 @@ const Detail = () => {
         </div>
 
         {/* Tombol Aksi */}
-        <div className="flex justify-lest mt-6 space-x-4">
+        <div className="flex justify-start mt-6 space-x-4">
           <a
             href={project.link_code}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold"
@@ -167,3 +144,6 @@ const Detail = () => {
 };
 
 export default Detail;
+
+
+

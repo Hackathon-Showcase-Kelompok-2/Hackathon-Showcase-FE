@@ -1,19 +1,59 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const ProjectFilter = () => {
   const options = ["Pilihan 1", "Pilihan 2", "Pilihan 3", "Pilihan 4"];
   const [projects, setProjects] = useState([]);
+  const [teams, setTeams] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch data dari API Laravel
-    fetch("http://127.0.0.1:8000/api/projects")
-      .then((response) => response.json())
-      .then((data) => {
-        setProjects(data); // Gunakan sesuai struktur API
-      })
-      .catch((error) => console.error("Error fetching projects:", error));
+    const fetchProjectsAndTeams = async () => {
+      try {
+        // Fetch project data
+        const projectResponse = await fetch("http://127.0.0.1:8000/api/projects");
+        if (!projectResponse.ok) {
+          throw new Error("Failed to fetch projects");
+        }
+        const projectData = await projectResponse.json();
+        setProjects(projectData);
+
+        // Fetch teams data based on user_id
+        const userIds = projectData.map((project) => project.user_id);
+        const uniqueUserIds = [...new Set(userIds)];
+
+        const teamResponses = await Promise.all(
+          uniqueUserIds.map((userId) =>
+            fetch(`http://127.0.0.1:8000/api/teams?user_id=${userId}`)
+          )
+        );
+
+        const teamData = await Promise.all(
+          teamResponses.map((res) => res.json())
+        );
+
+        // Flatten the teams data into an object by user_id
+        const teamsObject = {};
+        teamData.forEach((team) => {
+          team.forEach((t) => {
+            teamsObject[t.user_id] = t;
+          });
+        });
+
+        setTeams(teamsObject);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjectsAndTeams();
   }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="min-h-screen w-screen bg-gray-50 flex justify-center items-start p-6">
@@ -55,45 +95,46 @@ const ProjectFilter = () => {
           {/* Project List Section */}
           <div className="flex-1">
             <div className="flex gap-6 flex-wrap">
-              {projects.map((project) => (
-                <Link
-                  to={`/project/${project.id}`}
-                  key={project.id}
-                  className="w-[398px] h-[578px] bg-white border border-gray-300 rounded-lg shadow-sm p-4 hover:shadow-lg transition-shadow"
-                >
-                  {/* Gambar Proyek */}
-                  <img
-                    src={
-                      project.image
-                        ? `http://127.0.0.1:8000/storage/project_images/${project.image}`
-                        : "https://via.placeholder.com/371x249"
-                    }
-                    alt={project.title}
-                    className="w-[371px] h-[249px] rounded-lg object-cover mb-4"
-                  />
-                  <h3 className="text-lg font-semibold mb-2 text-black">{project.title}</h3>
-                  <p className="text-gray-600 text-sm mb-4">{project.description}</p>
-                  <div className="flex items-center gap-2 mb-4">
+              {projects.map((project) => {
+                const team = teams[project.user_id]; // Find the team for the user_id
+                const teamImage = team ? team.image : "/default_team_image.png"; // Fallback to default image if no team found
+
+                return (
+                  <Link
+                    to={`/project/${project.id}`}
+                    key={project.id}
+                    className="w-[398px] h-[578px] bg-white border border-gray-300 rounded-lg shadow-sm p-4 hover:shadow-lg transition-shadow"
+                  >
+                    {/* Gambar Proyek */}
                     <img
                       src={
-                        project.user?.image
-                          ? `http://127.0.0.1:8000/storage/user_images/${project.user.image}`
-                          : "https://via.placeholder.com/32"
+                        project.image
+                          ? `http://127.0.0.1:8000/storage/project_images/${project.image}`
+                          : "https://via.placeholder.com/371x249"
                       }
-                      alt={project.user?.name || "User"}
-                      className="w-8 h-8 rounded-full"
+                      alt={project.title}
+                      className="w-[371px] h-[249px] rounded-lg object-cover mb-4"
                     />
-                    <span className="text-sm font-medium text-gray-700">
-                      {project.user?.name || "Unknown"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-gray-500 text-sm">
-                    <span>❤️ {project.likes_count || 0}</span>
-                    <span>💬 {project.project_comments_count || 0}</span>
-                    <span>👁️ {project.views || 0}</span>
-                  </div>
-                </Link>
-              ))}
+                    <h3 className="text-lg font-semibold mb-2 text-black">{project.title}</h3>
+                    <p className="text-gray-600 text-sm mb-4">{project.description}</p>
+                    <div className="flex items-center gap-2 mb-4">
+                      <img
+                        src={`http://127.0.0.1:8000/storage/team_images/${teamImage}`}
+                        alt="Team"
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <span className="text-sm font-medium text-gray-700">
+                        {team?.name || "No Team"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-gray-500 text-sm">
+                      <span>❤️ {project.likes_count || 0}</span>
+                      <span>💬 {project.project_comments_count || 0}</span>
+                      <span>👁️ {project.views || 0}</span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
             {/* Pagination Slider */}
             <div className="flex justify-center mt-6">

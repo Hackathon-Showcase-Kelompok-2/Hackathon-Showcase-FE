@@ -10,6 +10,7 @@ const CommentSection = () => {
   const [loading, setLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [userTeamImage, setUserTeamImage] = useState(null); // State for team image
 
   // Periksa status login dan ambil data user
   useEffect(() => {
@@ -24,6 +25,19 @@ const CommentSection = () => {
         .then((response) => {
           setIsLoggedIn(true);
           setUser(response.data); // Set data user
+          // Fetch team data after getting user info
+          if (response.data.id) {
+            axios
+              .get(`http://127.0.0.1:8000/api/teams?user_id=${response.data.id}`)
+              .then((teamResponse) => {
+                const team = teamResponse.data[0]; // Assuming user belongs to one team
+                console.log("data team:",team.image)
+                setUserTeamImage(team.image || null); // Set the team's image
+              })
+              .catch((error) => {
+                console.error("Error fetching team data:", error);
+              });
+          }
         })
         .catch(() => {
           setIsLoggedIn(false);
@@ -97,9 +111,7 @@ const CommentSection = () => {
               <img
                 alt="User profile"
                 className="w-12 h-12 rounded-full mr-4"
-                src={`http://127.0.0.1:8000/storage/${
-                  user?.img_profile || "default.jpg"
-                }`}
+                src={`http://127.0.0.1:8000/storage/team_images/${userTeamImage}`}
               />
               <div className="flex-1">
                 <textarea
@@ -145,9 +157,7 @@ const CommentSection = () => {
               name={comment.commentator.name}
               date={new Date(comment.created_at).toLocaleDateString()}
               text={comment.content}
-              imgSrc={`http://127.0.0.1:8000/storage/${
-                comment.commentator.img_profile || "default.jpg"
-              }`}
+              imgSrc={`http://127.0.0.1:8000/storage/images_teams/${userTeamImage}`}
             />
           ))}
         </div>

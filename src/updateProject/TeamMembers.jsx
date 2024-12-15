@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const TeamMembers = () => {
   const { id } = useParams();
@@ -84,12 +84,9 @@ const TeamMembers = () => {
           ))}
         </div>
         <div className="mt-6 text-center">
-        <Link to={`/profile-team/${id}`}>
-
           <button className="bg-blue-600 text-white py-2 px-6 rounded-lg w-full">
             Lihat Profil Tim
           </button>
-        </Link>
         </div>
       </div>
     </div>
